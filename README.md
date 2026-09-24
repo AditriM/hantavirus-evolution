@@ -13,20 +13,19 @@ hantavirus strains showing how they're related to each other and how fast
 they've been changing over time
 
 - **Identifies genomic sites under positive selection** - We find the specific 
-spots in the virus's DNA that are evolving the fastest, which are the parts 
-the virus is actively changing to survive
+spots in the virus's DNA that are evolving the fastest
 
 - **Predicts reservoir host genus from sequence** - We train a machine learning 
 model that can look at an unknown hantavirus sequence and predict which type 
-of rodent it most likely came from
+of rodent it most likely came from (is this redundant?)
 
 - **Flags fast evolving lineages for closer surveillance** - We automatically 
 identify which hantavirus strains are changing unusually quickly compared to 
 their relatives, so researchers know which ones to watch more closely
 
 - **Visualizes all results in a live dashboard** - We build an interactive 
-website where you can see all our results, upload a new sequence, and get a 
-prediction instantly without needing to run any code yourself
+dashboard where you can see all our results, upload a new sequence, and get a 
+prediction instantly without needing to run any code yourself (compiling speed would be really slow?)
 
 ## Team
 - Aditri Mohanty
