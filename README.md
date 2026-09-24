@@ -24,7 +24,7 @@ their relatives, so researchers know which ones to watch more closely
 
 - **Visualizes all results in a live dashboard** - We build an interactive 
 dashboard where you can see all our results, upload a new sequence, and get a 
-prediction instantly without needing to run any code yourself (compiling speed would be really slow?)
+prediction instantly without needing to run any code yourself (compiling speed would be really slow so would this be worth it?)
 
 ## Team
 - Aditri Mohanty
