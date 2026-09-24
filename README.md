@@ -20,7 +20,7 @@ of rodent it most likely came from (is this redundant?)
 
 - **Flags fast evolving lineages for closer surveillance** - We automatically 
 identify which hantavirus strains are changing unusually quickly compared to 
-their relatives, so researchers know which ones to watch more closely
+their relatives, so researchers know which ones to watch more closely (goal is to have it entirely be automated by the pipeline, so we don't have to go back in and manually do stuff after the project ends, or if we do it's extremely little maintence)
 
 - **Visualizes all results in a live dashboard** - We build an interactive 
 dashboard where you can see all our results, upload a new sequence, and get a 
