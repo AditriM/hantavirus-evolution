@@ -8,7 +8,7 @@ Build a pipeline that:
 hantavirus DNA sequences from a public government database, remove the ones 
 with missing or bad data, and organize them so they're ready to analyze
 
-- **Builds time-calibrated phylogenetic trees** - We build a family tree of 
+- **Builds time calibrated phylogenetic trees** - We build a family tree of 
 hantavirus strains showing how they're related to each other and how fast 
 they've been changing over time
 
@@ -20,7 +20,7 @@ the virus is actively changing to survive
 model that can look at an unknown hantavirus sequence and predict which type 
 of rodent it most likely came from
 
-- **Flags fast-evolving lineages for closer surveillance** - We automatically 
+- **Flags fast evolving lineages for closer surveillance** - We automatically 
 identify which hantavirus strains are changing unusually quickly compared to 
 their relatives, so researchers know which ones to watch more closely
 
