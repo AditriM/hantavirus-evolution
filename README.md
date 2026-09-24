@@ -13,7 +13,7 @@ hantavirus strains showing how they're related to each other and how fast
 they've been changing over time
 
 - **Identifies genomic sites under positive selection** - We find the specific 
-spots in the virus's DNA that are evolving the fastest (not sure how possible this is, hantaviruses don't mutate that much?)
+spots in the virus's DNA that are evolving the fastest (not sure how possible this is, hantaviruses don't mutate that much compared to other virus families?)
 
 - **Predicts reservoir host genus from sequence** - We train a machine learning 
 model that can look at an unknown hantavirus sequence and predict which type 
