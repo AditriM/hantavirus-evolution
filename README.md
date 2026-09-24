@@ -5,8 +5,7 @@ Sequence-based phylogenetic analysis and host prediction for hantavirus strains.
 Build a pipeline that:
 
 - **Downloads and cleans hantavirus sequences** - We grab all available 
-hantavirus DNA sequences from a public government database, remove the ones 
-with missing or bad data, and organize them so they're ready to analyze
+hantavirus DNA sequences from a public database, then clean and organize them so they're ready to analyze
 
 - **Builds time calibrated phylogenetic trees** - We build a family tree of 
 hantavirus strains showing how they're related to each other and how fast 
