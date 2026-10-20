@@ -235,7 +235,7 @@ def find_segment(record):
  
  
 def find_genus(raw_host):
-    """Messy host string in, genus name out. Blank if we can't match it."""
+    """Messy host string to find genus name. Will blank if we can't match it."""
     if not raw_host:
         return ""
  
@@ -248,8 +248,7 @@ def find_genus(raw_host):
  
     if text in HOST_TO_GENUS:
         return HOST_TO_GENUS[text]
- 
-    # Catches "Peromyscus sp." where they didn't know the species
+     
     all_genera = list(HOST_TO_GENUS.values())
     first_word = text.split(" ")[0].capitalize()
     if first_word in all_genera:
@@ -259,7 +258,6 @@ def find_genus(raw_host):
  
  
 def find_year(raw_date):
-    """Dates come in a million formats. We just want the year."""
     if not raw_date:
         return ""
     match = re.search(r"(19|20)\d\d", raw_date)
