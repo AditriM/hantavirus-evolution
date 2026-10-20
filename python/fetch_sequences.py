@@ -26,7 +26,7 @@ FORCE_REDOWNLOAD = False
  
 LIMIT = None
  
-# How many to ask for at once. NCBI times out if we ask for too much.
+# How many to ask for at once since NCBI times out if we ask for too much
 BATCH_SIZE = 200
 
  
@@ -62,7 +62,7 @@ else:
     print("No API key, so NCBI limits us to 3 requests a second.")
  
  
-# ---- step 2, stop early if we already have the data ----
+# ---- step 2 ----
  
 # Keeps re runs fast and means our demo survives bad wifi
 if OUTPUT_FILE.exists() and not FORCE_REDOWNLOAD:
@@ -72,7 +72,7 @@ if OUTPUT_FILE.exists() and not FORCE_REDOWNLOAD:
     sys.exit()
  
  
-# ---- step 3, ask NCBI what matches ----
+# ---- step 3 ----
  
 print(f"Searching NCBI for: {query}")
  
