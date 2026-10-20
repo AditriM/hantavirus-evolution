@@ -2,7 +2,7 @@
 """
 STEP 1: download the hantavirus sequences from NCBI.
  
-  1. read our email, API key and search query from config.yaml
+  1. read our email, API key and search query from config.yaml (other people need their own email ad api key, rn this is using mines for local testing)
   2. skip everything if we already downloaded the data
   3. ask NCBI how many records match
   4. download them 200 at a time
@@ -24,17 +24,12 @@ from Bio import Entrez
 # True means download again even if we already have the file
 FORCE_REDOWNLOAD = False
  
-# A number like 200 grabs only that many, good for testing.
-# None means grab everything.
 LIMIT = None
  
-# How many to ask for at once. NCBI times out if we ask for much more.
+# How many to ask for at once. NCBI times out if we ask for too much.
 BATCH_SIZE = 200
+
  
- 
-# ---- where our files live ----
- 
-# This script sits in scripts/, so go up one level for the project folder
 PROJECT_FOLDER = Path(__file__).resolve().parent.parent
 CONFIG_FILE = PROJECT_FOLDER / "config.yaml"
 OUTPUT_FILE = PROJECT_FOLDER / "data" / "raw" / "hantavirus_raw.gb"
@@ -42,7 +37,7 @@ OUTPUT_FILE = PROJECT_FOLDER / "data" / "raw" / "hantavirus_raw.gb"
  
 # ---- step 1, read the config ----
  
-# Our email and key live in a separate file so they don't reach GitHub
+# Th email and key live in a separate file so they don't reach GitHub
 if not CONFIG_FILE.exists():
     print("Can't find config.yaml")
     print("Copy config.example.yaml to config.yaml and fill it in.")
@@ -81,8 +76,7 @@ if OUTPUT_FILE.exists() and not FORCE_REDOWNLOAD:
  
 print(f"Searching NCBI for: {query}")
  
-# usehistory keeps the result list on NCBI's server and gives us a ticket,
-# way easier than us passing 11000 ID numbers back and forth
+# usehistory keeps the result list on NCBI's server and gives us a ticket, way easier than us passing 11000 ID numbers back and forth
 search_handle = Entrez.esearch(db="nucleotide", term=query,
                                retmax=0, usehistory="y")
 search_results = Entrez.read(search_handle)
@@ -107,8 +101,7 @@ if LIMIT is not None and LIMIT < total:
  
 OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
  
-# Writing to a temp file and renaming at the end, so a crashed download
-# can't leave us with half a file that looks finished
+# Writing to a temp file and renaming at the end, so a crashed download can't leave us with half a file that looks finished
 temp_file = OUTPUT_FILE.with_suffix(".partial")
 out = open(temp_file, "w")
  
