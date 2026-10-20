@@ -9,10 +9,9 @@ STEP 2: clean up the GenBank records and sort them by segment.
   5. save one FASTA per segment plus a metadata table
   6. print a summary of what got dropped and why
  
-Split by segment because the three segments swap between strains, so they
-don't share one family tree.
+Split by segment because the three segments swap between strains, so they don't share one family tree.
  
-Run with: python scripts/clean_sequences.py
+Run with: python scripts/clean_sequences.py, and config.yaml (run those first, also youd need to get a ncbi api ky)
 """
  
 import csv
@@ -26,20 +25,14 @@ from Bio import SeqIO
  
 # ---- settings ----
  
-# Nothing under this is worth keeping at all
 MIN_LENGTH = 400
- 
-# Proper minimums, used once we know the segment. A 400bp bit of the L
-# gene is only about 6 percent of a real L segment, so lining it up
-# against full genomes just makes a mess of gaps. Picked these off the
-# length distribution in our own data.
+
 MIN_LENGTH_BY_SEGMENT = {"S": 1000, "M": 2500, "L": 4000}
  
 # Rough segment sizes, only used as a last ditch guess
 SEGMENT_RANGES = {"S": (1200, 2400), "M": (3000, 4000), "L": (5500, 7000)}
  
-# For the host check later. Need this many records before asking whether
-# a virus is consistent about its host.
+# For the host check later. Need this many records before asking whether a virus is consistent about its host.
 MIN_RECORDS_FOR_CHECK = 10
  
 # Host genus under this share of a virus's records gets flagged
@@ -55,10 +48,7 @@ OUTPUT_FOLDER = PROJECT_FOLDER / "data" / "processed"
  
 # ---- our host lookup table ----
  
-# GenBank's host field is a blank box, so people type whatever. No way to
-# automate this. The script prints what it couldn't match sorted by how
-# often it shows up, so we read the top of that list and add the ones
-# worth adding. One line here can fix a few hundred records at once.
+# GenBank's host field is a blank box, so people type whatever. No way to automate this. The script prints what it couldn't match sorted by how often it shows up, so we read the top of that list and add the ones worth adding.
 HOST_TO_GENUS = {
     # Peromyscus, the Sin Nombre hosts in North America
     "peromyscus maniculatus": "Peromyscus",
@@ -72,10 +62,7 @@ HOST_TO_GENUS = {
     "apodemus flavicollis": "Apodemus",
     "apodemus peninsulae": "Apodemus",
     "striped field mouse": "Apodemus",
-    # Red backed voles, the Puumala hosts. People argue over whether this
-    # genus is Myodes or Clethrionomys and NCBI can't decide either, it
-    # files glareolus under one and rutilus under the other. Same animals,
-    # so we dump them all in one bucket.
+    # Red backed voles, the Puumala hosts. People argue over whether this genus is Myodes or Clethrionomys and NCBI can't decide either, it files glareolus under one and rutilus under the other. Same animals, so we dump them all in one bucket.
     "myodes glareolus": "Myodes",
     "clethrionomys glareolus": "Myodes",
     "myodes rufocanus": "Myodes",
@@ -160,12 +147,7 @@ HOST_TO_GENUS = {
     "afronycteris nana": "Afronycteris",
     "pteropus alecto": "Pteropus",
     "mops condylurus": "Mops",
-    # Fish, a gecko, a skink, two birds. Careful how we word this one:
-    # these are in the FAMILY Hantaviridae but not the genus
-    # Orthohantavirus. The fish and reptile ones sit in their own
-    # subfamilies and everything that infects mammals sits in another.
-    # So "hantaviruses infect fish" is wrong. The family just goes way
-    # further than rodents.
+    # these are in the family Hantaviridae but not the genus Orthohantavirus
     "perca fluviatilis": "Perca",
     "eviota zebrina": "Eviota",
     "eptatretus burgeri": "Eptatretus",
@@ -179,8 +161,7 @@ HOST_TO_GENUS = {
     "scincella lateralis": "Scincella",
     "ardenna grisea": "Ardenna",
     "cyanocitta cristata": "Cyanocitta",
-    # Patients. Real sequences but they came out of a person, so they say
-    # nothing about what animal the virus actually lives in.
+    # Thse are just patients, so they say nothing about what animal the virus actually lives in
     "homo sapiens": "Homo",
     "human": "Homo",
 }
@@ -215,11 +196,8 @@ def should_exclude(record):
 def find_segment(record):
     """Figure out if this is S, M or L. None if we can't tell.
  
-    Three tries: the segment label, then the protein name since each
-    segment makes a different one, then the length as a straight guess.
-    84 records out of 11660 failed all three, so it holds up fine.
+    Three tries: the segment label, then the protein name since each segment makes a different one, then the length as a straight guess. 84 records out of 11660 failed all three, so it feems to hold up fine?
     """
-    # Easy case, somebody filled in the label
     for feature in record.features:
         if feature.type == "source":
             for value in feature.qualifiers.get("segment", []):
@@ -246,7 +224,7 @@ def find_segment(record):
     if "polymerase" in text or "rdrp" in text:
         return "L"
  
-    # Last resort, guess from how long it is
+    # Last resort
     length = len(record.seq)
     for segment in SEGMENT_RANGES:
         low, high = SEGMENT_RANGES[segment]
@@ -262,9 +240,9 @@ def find_genus(raw_host):
         return ""
  
     text = raw_host.strip().lower()
-    # Drop brackets, some say "Peromyscus maniculatus (deer mouse)"
+    # Drop the brackets, bc some say "Peromyscus maniculatus (deer mouse)"
     text = re.sub(r"\(.*?\)", "", text)
-    # Cut anything after a semicolon, like "; specimen_voucher: TK150006"
+    # Cut anything after a semicolon, so like "; specimen_voucher: TK150006"
     text = text.split(";")[0]
     text = re.sub(r"\s+", " ", text).strip()
  
@@ -290,7 +268,7 @@ def find_year(raw_date):
     return ""
  
  
-# ---- step 1, check we have the raw data ----
+# ---- step 1, raw data check ----
  
 if not RAW_FILE.exists():
     print(f"No raw data at {RAW_FILE}")
@@ -300,7 +278,7 @@ if not RAW_FILE.exists():
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
  
  
-# ---- step 2, go through every record ----
+# ---- step 2, record combing ----
  
 counts = Counter()           # what got dropped where
 sequences_by_segment = defaultdict(list)
@@ -321,14 +299,10 @@ for record in SeqIO.parse(RAW_FILE, "genbank"):
         counts["dropped_too_short"] = counts["dropped_too_short"] + 1
         continue
  
-    # Those weird letters are IUPAC codes meaning "could be either base",
-    # which is fine. Anything else means the record is broken.
     if set(sequence) - set("ACGTNRYKMSWBDHV-"):
         counts["dropped_bad_letters"] = counts["dropped_bad_letters"] + 1
         continue
  
-    # Exact copies only. CD HIT handles the nearly identical outbreak
-    # ones later.
     if sequence in already_seen:
         counts["dropped_duplicate"] = counts["dropped_duplicate"] + 1
         continue
@@ -339,7 +313,6 @@ for record in SeqIO.parse(RAW_FILE, "genbank"):
         counts["dropped_no_segment"] = counts["dropped_no_segment"] + 1
         continue
  
-    # Now we know the segment we can use a real minimum length
     if len(sequence) < MIN_LENGTH_BY_SEGMENT[segment]:
         counts["dropped_short_for_segment"] += 1
         counts["short_" + segment] += 1
@@ -361,13 +334,11 @@ for record in SeqIO.parse(RAW_FILE, "genbank"):
     if year:
         counts["year_" + segment] += 1
  
-    # Short FASTA headers keep MAFFT and IQ TREE happy later
     record.description = ""
     sequences_by_segment[segment].append(record)
  
     country = get_field(record, "country")
     if not country:
-        # NCBI renamed this at some point so check both
         country = get_field(record, "geo_loc_name")
  
     table_rows.append({
@@ -384,7 +355,7 @@ for record in SeqIO.parse(RAW_FILE, "genbank"):
     })
  
  
-# ---- step 3, save the files ----
+# ---- step 3, save files ----
  
 for segment in sorted(sequences_by_segment):
     path = OUTPUT_FOLDER / (segment + ".fasta")
@@ -403,7 +374,7 @@ meta_file.close()
 print(f"Wrote {len(table_rows):>5} rows to {meta_path}")
  
  
-# ---- step 4, print the summary ----
+# ---- step 4, print summary ----
  
 print("\n" + "=" * 60)
 print("FILTERING FUNNEL")
@@ -438,11 +409,9 @@ print("\n  (w/ host leaves out the patients since those say nothing about")
 print("   the reservoir animal)")
  
  
-# ---- step 5, sanity check the host mapping ----
+# ---- step 5, host mapping ----
  
-# Each hantavirus usually sticks to one animal. So if a virus mostly
-# shows up in one genus but a couple of records say otherwise, those are
-# worth a look. Not saying they're wrong, just pointing at them.
+# Each hantavirus usually sticks to one animal(?) So if a virus mostly shows up in one genus but a couple of records say otherwise, we should prob double check?
  
 hosts_per_virus = defaultdict(Counter)
  
@@ -453,9 +422,7 @@ for row in table_rows:
     if not virus or not genus or genus == "Homo":
         continue
  
-    # Skip the catch all names. "Orthohantavirus sp." isn't one virus,
-    # it's every unclassified one under the same label, so asking what
-    # its usual host is means nothing.
+    # Skip catch all names like Orthohantavirus sp since it isn't one virus, it's every unclassified one under the same label, so asking what its usual host is means nothing
     if "sp." in virus.lower() or "unclassified" in virus.lower():
         continue
  
@@ -504,7 +471,7 @@ else:
  
 if unmapped_hosts:
     print("\n" + "=" * 60)
-    print(f"HOST STRINGS WE DIDN'T RECOGNISE ({len(unmapped_hosts)} distinct)")
+    print(f"HOST STRINGS NOT RECOGNIZED ({len(unmapped_hosts)} distinct)")
     print("=" * 60)
     print("Add the common ones to HOST_TO_GENUS up top and run again.\n")
     for host, count in unmapped_hosts.most_common(25):
