@@ -109,7 +109,7 @@ HOST_TO_GENUS = {
     "eliurus majori": "Eliurus",
     "mesocricetus auratus": "Mesocricetus",
     "sundamys muelleri": "Sundamys",
-    # Shrews, which aren't rodents. Part of why we kept the whole family.
+    # Shrews
     "sorex araneus": "Sorex",
     "sorex caecutiens": "Sorex",
     "sorex monticolus": "Sorex",
