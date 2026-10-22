@@ -27,6 +27,6 @@ dashboard where you can see all our results, upload a new sequence, and get a
 prediction instantly without needing to run any code yourself
 
 ## Team
-- Aditri Mohanty
-- Ana Pinkerton
-- Srikritha Kosuri
+- Aditri Mohanty - Pipeline Coding, Slides
+- Ana Pinkerton - Background Research, Phylogenetic tree, Slides
+- Srikritha Kosuri - Background Research, History, Slides
